@@ -22,7 +22,7 @@ Build instructions
 
 Data
 ====
-To get hold of data, plesae contact Kitware Inc.
+To get hold of the data, plesae contact Kitware Inc.
 
 Run application
 ===============
