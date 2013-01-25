@@ -1,0 +1,6 @@
+cmake_minimum_required(VERSION 2.8.10)
+project(app)
+find_package(VTK 6.0 REQUIRED NO_MODULE)
+include(${VTK_USE_FILE})
+add_executable(app app.cpp main.cpp)
+target_link_libraries(app ${VTK_LIBRARIES})
