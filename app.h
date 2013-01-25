@@ -18,6 +18,8 @@
 
 #include <vtkSmartPointer.h>
 
+#include <string>
+
 class vtkActor;
 class vtkCallbackCommand;
 class vtkLegendBoxActor;
@@ -31,7 +33,7 @@ public:
   App();
   ~App();
 
-  void init();
+  void init(const int& argc, char** argv);
   void start();
 
 private:
@@ -39,6 +41,8 @@ private:
   void loadAndDrawCountryBorders();
   void loadAndDrawLoans();
   void loasAndDrawLenders();
+
+  std::string DataLookupPath;
 
   vtkSmartPointer<vtkActor> Globe;
   vtkSmartPointer<vtkRenderer> Renderer;

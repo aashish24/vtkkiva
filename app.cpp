@@ -56,6 +56,8 @@
   #include <vtkPolyDataWriter.h>
 #endif
 
+#include <cstring>
+
 void func(vtkObject*, unsigned long eid, void* clientdata, void* calldata);
 
 //////////////////////////////////////////////////////////////////////////////
@@ -86,6 +88,7 @@ void ResetCameraCommand (vtkObject* caller, long unsigned int eventId,
 //////////////////////////////////////////////////////////////////////////////
 App::App()
 {
+  this->DataLookupPath = "../data";
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -95,8 +98,25 @@ App::~App()
 }
 
 //////////////////////////////////////////////////////////////////////////////
-void App::init()
+void App::init(const int &argc, char **argv)
 {
+  if (argc > 1)
+  {
+    for (int i = 0; i < argc; ++i)
+    {
+      if (strcmp(argv[i], "-d") == 0 && ((i + 1) < argc) )
+      {
+        this->DataLookupPath = argv[i+1];
+      }
+      else if (strcmp(argv[i], "-h") == 0)
+      {
+        std::cout << "app -h (help) -d <data lookup path> (default ../data)"
+                  << std::endl;
+        std::exit(0);
+      }
+    }
+  }
+
   this->Renderer = vtkSmartPointer<vtkRenderer>::New();
   this->RenWindow = vtkSmartPointer<vtkRenderWindow>::New();
   this->Interactor = vtkSmartPointer<vtkRenderWindowInteractor>::New();
@@ -150,7 +170,7 @@ vtkSmartPointer<vtkActor> App::createGlobe()
   // Skip textures for now since they have issues
 #if 0
   vtkNew<vtkPNGReader> pngReader;
-  pngReader->SetFileName("../data/land_shallow_topo_2048.png");
+  pngReader->SetFileName(this->DataLookupPath + "//land_shallow_topo_2048.png");
 
   vtkNew<vtkTexture> texture;
   texture->SetInputConnection(pngReader->GetOutputPort());
@@ -174,8 +194,9 @@ vtkSmartPointer<vtkActor> App::createGlobe()
 //////////////////////////////////////////////////////////////////////////////
 void App::loadAndDrawCountryBorders()
 {
+  std::string bordersFileName = this->DataLookupPath + "//countries.shp";
   vtkNew<vtkGDALVectorReader> reader;
-  reader->SetFileName("../data/countries.shp");
+  reader->SetFileName(bordersFileName.c_str());
   reader->Update();
 
   // Get the data
@@ -238,8 +259,9 @@ void App::loadAndDrawLoans()
   vtkNew<vtkPoints> loansGeoPoints;
   vtkNew<vtkCellArray> loansVerts;
 
+  std::string loansFileName = this->DataLookupPath + "//loans.csv";
   vtkNew<vtkDelimitedTextReader> csvReader;
-  csvReader->SetFileName("../data/loans.csv");
+  csvReader->SetFileName(loansFileName.c_str());
 
   vtkNew<vtkStringToCategory> stringToCat;
   stringToCat->SetInputConnection(csvReader->GetOutputPort());
@@ -363,8 +385,9 @@ void App::loasAndDrawLenders()
   vtkNew<vtkPoints> lendersGeoPoints;
   vtkNew<vtkCellArray> lendersVerts;
 
+  std::string lendersFileName = this->DataLookupPath + "//lenders.csv";
   vtkNew<vtkDelimitedTextReader> csvReader;
-  csvReader->SetFileName("../data/lenders.csv");
+  csvReader->SetFileName(lendersFileName.c_str());
   csvReader->Update();
 
   vtkSmartPointer<vtkTable> table =
