@@ -22,4 +22,23 @@ Build instructions
 
 Data
 ====
-For data contact Kitware Inc.
+To get hold of data, plesae contact Kitware Inc.
+
+Run application
+===============
+Application expects that data directory is placed relative to the
+directory of the application. Such as below:
+.
+|
+|_ data
+|
+|_ install/vtkkiva
+
+You can provide your own data lookup path by providing the path using '-d' option
+
+vtkkiva -d "your path here"
+
+
+
+
+
