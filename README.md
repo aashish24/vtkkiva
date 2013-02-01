@@ -16,6 +16,7 @@ Build instructions
 =================
 * Requires VTK 6 (from the VTK repository)
 ** Get VTK from git://vtk.org/VTK.git
+** MAKE SURE TO turn ON Module_vtkIOGDAL (You can find this option in the advanced mode)
 
 * CMake 2.8.10 or higher
 ** Get CMake from http://cmake.org/cmake/resources/software.html
