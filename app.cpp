@@ -57,6 +57,7 @@
 #endif
 
 #include <cstring>
+#include <sstream>
 
 void func(vtkObject*, unsigned long eid, void* clientdata, void* calldata);
 
@@ -86,9 +87,45 @@ void ResetCameraCommand (vtkObject* caller, long unsigned int eventId,
 }
 
 //////////////////////////////////////////////////////////////////////////////
+class vtkTimerCallback : public vtkCommand
+{
+  public:
+    static vtkTimerCallback *New()
+    {
+      vtkTimerCallback* cb = new vtkTimerCallback;
+      return cb;
+    }
+
+    void SetRenderWindow(vtkRenderWindow* renWin)
+    {
+      if (!renWin)
+      {
+        std::cerr  << "[ERROR] Invalid render window" << std::endl;
+      }
+
+      this->RenderWindow = renWin;
+    }
+
+    virtual void Execute(vtkObject *vtkNotUsed(caller), unsigned long eventId,
+                         void *vtkNotUsed(callData))
+    {
+      if (vtkCommand::TimerEvent == eventId)
+      {
+        std::cerr << "Render " << std::endl;
+        this->RenderWindow->Render();
+      }
+    }
+
+  private:
+    vtkRenderWindow* RenderWindow;
+};
+
+
+//////////////////////////////////////////////////////////////////////////////
 App::App()
 {
   this->DataLookupPath = "../data";
+  this->Duration = 16;
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -108,9 +145,14 @@ void App::init(const int &argc, char **argv)
       {
         this->DataLookupPath = argv[i+1];
       }
+      else if (strcmp(argv[i], "-t") == 0 && ((i + 1) < argc) )
+      {
+        std::istringstream iss (argv[i+1]);
+        iss >> this->Duration;
+      }
       else if (strcmp(argv[i], "-h") == 0)
       {
-        std::cout << "app -h (help) -d <data lookup path> (default ../data)"
+        std::cout << "app -h (help) -d <data lookup path> (default ../data) -t <render loop timer> (default 100 ms)"
                   << std::endl;
         std::exit(0);
       }
@@ -121,12 +163,15 @@ void App::init(const int &argc, char **argv)
   this->RenWindow = vtkSmartPointer<vtkRenderWindow>::New();
   this->Interactor = vtkSmartPointer<vtkRenderWindowInteractor>::New();
   this->ResetCameraCallback = vtkSmartPointer<vtkCallbackCommand>::New();
+  this->TimerCallback = vtkSmartPointer<vtkTimerCallback>::New();
+  this->TimerCallback->SetRenderWindow(this->RenWindow);
   this->LegendActor = vtkSmartPointer<vtkLegendBoxActor>::New();
 
   this->RenWindow->AddRenderer(this->Renderer);
   this->Interactor->SetRenderWindow(this->RenWindow);
   this->Renderer->AddObserver(vtkCommand::ResetCameraEvent,
                               this->ResetCameraCallback);
+  this->Interactor->AddObserver(vtkCommand::TimerEvent, this->TimerCallback);
 
   // Do not draw globe for now
   this->Globe = this->createGlobe();
@@ -154,6 +199,8 @@ void App::start()
   this->ResetCameraCallback->SetCallback(ResetCameraCommand);
 
   this->RenWindow->Render();
+
+  this->Interactor->CreateRepeatingTimer(this->Duration);
   this->Interactor->Start();
 }
 

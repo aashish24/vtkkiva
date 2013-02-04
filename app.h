@@ -26,6 +26,7 @@ class vtkLegendBoxActor;
 class vtkRenderer;
 class vtkRenderWindow;
 class vtkRenderWindowInteractor;
+class vtkTimerCallback;
 
 class App
 {
@@ -43,12 +44,14 @@ private:
   void loasAndDrawLenders();
 
   std::string DataLookupPath;
+  unsigned long Duration;
 
   vtkSmartPointer<vtkActor> Globe;
   vtkSmartPointer<vtkRenderer> Renderer;
   vtkSmartPointer<vtkRenderWindow> RenWindow;
   vtkSmartPointer<vtkRenderWindowInteractor> Interactor;
   vtkSmartPointer<vtkCallbackCommand> ResetCameraCallback;
+  vtkSmartPointer<vtkTimerCallback> TimerCallback;
   vtkSmartPointer<vtkLegendBoxActor> LegendActor;
 };
 
