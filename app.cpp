@@ -111,7 +111,6 @@ class vtkTimerCallback : public vtkCommand
     {
       if (vtkCommand::TimerEvent == eventId)
       {
-        std::cerr << "Render " << std::endl;
         this->RenderWindow->Render();
       }
     }
