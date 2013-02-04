@@ -16,6 +16,7 @@ Build instructions
 =================
 * Requires VTK 6 (from the VTK repository)
 ** Get VTK from git://vtk.org/VTK.git
+** Get GDAL from www.gdal.org
 ** MAKE SURE TO turn ON Module_vtkIOGDAL (You can find this option in the advanced mode)
 
 * CMake 2.8.10 or higher
@@ -31,7 +32,7 @@ Application expects that data directory is placed relative to the
 directory of the application.  You can provide your own data lookup path 
 by providing a path to the application using its '-d' option
 
-> vtkkiva -d "your path here"
+> vtkkiva -d "your path here" (default ../Data"  -t value (Render every value ms; Default is 16ms)
 
 
 
